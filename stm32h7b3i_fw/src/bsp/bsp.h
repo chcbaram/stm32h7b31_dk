@@ -15,9 +15,15 @@ extern "C" {
 
 #include "def.h"
 
+#include "stm32h7xx_hal.h"
+
 
 bool bspInit(void);
 bool bspDeInit(void);
+
+
+void delay(uint32_t ms);
+uint32_t millis(void);
 
 
 #ifdef __cplusplus

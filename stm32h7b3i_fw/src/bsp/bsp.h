@@ -22,6 +22,7 @@ bool bspInit(void);
 bool bspDeInit(void);
 
 
+void Error_Handler(void);
 void delay(uint32_t ms);
 uint32_t millis(void);
 

@@ -20,6 +20,8 @@ extern "C" {
 #include "uart.h"
 #include "cmdif.h"
 #include "swtimer.h"
+#include "button.h"
+
 
 void hwInit(void);
 

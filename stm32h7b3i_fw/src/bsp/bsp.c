@@ -9,7 +9,7 @@
 
 
 #include "bsp.h"
-
+#include "rtos.h"
 
 
 void MPU_Config(void);
@@ -36,6 +36,8 @@ bool bspInit(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
 
 
+  rtosInit();
+
   return true;
 }
 
@@ -47,7 +49,18 @@ bool bspDeInit(void)
 
 void delay(uint32_t ms)
 {
+#ifdef _USE_HW_RTOS
+  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+  {
+    osDelay(ms);
+  }
+  else
+  {
+    HAL_Delay(ms);
+  }
+#else
   HAL_Delay(ms);
+#endif
 }
 
 uint32_t millis(void)

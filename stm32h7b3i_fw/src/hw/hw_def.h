@@ -14,6 +14,19 @@
 
 
 
+#define _HW_DEF_RTOS_MEM_SIZE(x)              ((x)/4)
+
+#define _HW_DEF_RTOS_THREAD_PRI_MAIN          osPriorityNormal
+
+
+
+#define _HW_DEF_RTOS_THREAD_MEM_MAIN          _HW_DEF_RTOS_MEM_SIZE( 6*1024)
+
+
+
+#define _USE_HW_RTOS
+
+
 #define _USE_HW_LED
 #define      HW_LED_MAX_CH          2
 

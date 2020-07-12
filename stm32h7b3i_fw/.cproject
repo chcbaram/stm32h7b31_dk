@@ -49,6 +49,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/cmsis/Device/ST/STM32H7xx/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/cmsis/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/STM32H7xx_HAL_Driver/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/FreeRTOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/FreeRTOS/Source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/FreeRTOS/Source/CMSIS_RTOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.648463654" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -70,6 +74,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/cmsis/Device/ST/STM32H7xx/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/cmsis/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/STM32H7xx_HAL_Driver/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/FreeRTOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/FreeRTOS/Source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/FreeRTOS/Source/CMSIS_RTOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.1006059846" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
 							</tool>
@@ -94,7 +102,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/lib/cube" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/bsp/FreeRTOS/Source/CMSIS_RTOS_V2|src/bsp/FreeRTOS/Source/portable/MemMang/heap_5.c|src/bsp/FreeRTOS/Source/portable/MemMang/heap_3.c|src/bsp/FreeRTOS/Source/portable/MemMang/heap_2.c|src/bsp/FreeRTOS/Source/portable/MemMang/heap_1.c|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM7_MPU|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM4F|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM4_MPU|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM33|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM3_MPU|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM3|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM23_NTZ|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM23|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM0|src/bsp/FreeRTOS/Source/portable/Tasking|src/bsp/FreeRTOS/Source/portable/RVDS|src/bsp/FreeRTOS/Source/portable/Keil|src/bsp/FreeRTOS/Source/portable/IAR|src/bsp/FreeRTOS/Source/portable/Common|src/lib/cube" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -179,7 +187,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/lib/cube" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/bsp/FreeRTOS/Source/CMSIS_RTOS_V2|src/bsp/FreeRTOS/Source/portable/MemMang/heap_5.c|src/bsp/FreeRTOS/Source/portable/MemMang/heap_3.c|src/bsp/FreeRTOS/Source/portable/MemMang/heap_2.c|src/bsp/FreeRTOS/Source/portable/MemMang/heap_1.c|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM7_MPU|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM4F|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM4_MPU|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM33|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM3_MPU|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM3|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM23_NTZ|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM23|src/bsp/FreeRTOS/Source/portable/GCC/ARM_CM0|src/bsp/FreeRTOS/Source/portable/Tasking|src/bsp/FreeRTOS/Source/portable/RVDS|src/bsp/FreeRTOS/Source/portable/Keil|src/bsp/FreeRTOS/Source/portable/IAR|src/bsp/FreeRTOS/Source/portable/Common|src/lib/cube" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

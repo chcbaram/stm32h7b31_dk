@@ -23,6 +23,9 @@ extern "C" {
 #include "button.h"
 #include "sdram.h"
 #include "gpio.h"
+#include "i2c.h"
+#include "touch.h"
+
 
 void hwInit(void);
 

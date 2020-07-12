@@ -35,6 +35,12 @@
 #define _DEF_UART4                  3
 
 
+#define _DEF_I2C1                   0
+#define _DEF_I2C2                   1
+#define _DEF_I2C3                   2
+#define _DEF_I2C4                   3
+
+
 #define _DEF_HIGH                   1
 #define _DEF_LOW                    0
 
@@ -53,6 +59,19 @@
 
 
 typedef uint32_t  err_code_t;
+
+
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+
+#ifndef max
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+#endif
+
+#ifndef map
+#define map(value, in_min, in_max, out_min, out_max) ((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
+#endif
+
 
 
 

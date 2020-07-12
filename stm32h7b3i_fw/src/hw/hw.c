@@ -27,6 +27,8 @@ void hwInit(void)
 
   buttonInit();
   gpioInit();
+  i2cInit();
+  touchInit();
   sdramInit();
 
 }

@@ -25,6 +25,9 @@
 
 
 #define _USE_HW_RTOS
+#define _USE_HW_FT5336
+#define _USE_HW_TOUCH
+
 
 
 #define _USE_HW_LED
@@ -50,6 +53,14 @@
 
 #define _USE_HW_GPIO
 #define      HW_GPIO_MAX_CH         1
+
+#define _USE_HW_I2C
+#define      HW_I2C_MAX_CH          1
+
+
+
+#define _USE_TIMER_MICROS           TIM2
+#define _USE_TIMER_SYSTICK          TIM7
 
 
 #endif /* SRC_HW_HW_DEF_H_ */

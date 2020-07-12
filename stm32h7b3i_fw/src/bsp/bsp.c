@@ -14,7 +14,9 @@
 
 void MPU_Config(void);
 void SystemClock_Config(void);
+bool microsInit(void);
 
+static TIM_HandleTypeDef  TimHandle;
 
 bool bspInit(void)
 {
@@ -38,6 +40,8 @@ bool bspInit(void)
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
 
+
+  microsInit();
 
   rtosInit();
 
@@ -64,6 +68,16 @@ void delay(uint32_t ms)
 #else
   HAL_Delay(ms);
 #endif
+}
+
+void delayUs(uint32_t us)
+{
+  volatile uint32_t i;
+
+  for (i=0; i<us*1000; i++)
+  {
+
+  }
 }
 
 uint32_t millis(void)
@@ -124,12 +138,50 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART16;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART16|RCC_PERIPHCLK_I2C4
+                              |RCC_PERIPHCLK_FMC;
+  PeriphClkInitStruct.FmcClockSelection = RCC_FMCCLKSOURCE_D1HCLK;
   PeriphClkInitStruct.Usart16ClockSelection = RCC_USART16910CLKSOURCE_D2PCLK2;
+  PeriphClkInitStruct.I2c4ClockSelection = RCC_I2C4CLKSOURCE_D3PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
+}
+
+
+
+
+bool microsInit(void)
+{
+  uint32_t uwPrescalerValue = 0;
+
+  __HAL_RCC_TIM2_CLK_ENABLE();
+
+
+  /* Set TIMx instance */
+  TimHandle.Instance = TIM2;
+
+
+  // Compute the prescaler value to have TIMx counter clock equal to 1Mh
+  uwPrescalerValue = (uint32_t)((SystemCoreClock / 2) / 1000000) - 1;
+
+  TimHandle.Init.Period         = 0xFFFFFFFF;
+  TimHandle.Init.Prescaler      = uwPrescalerValue;
+  TimHandle.Init.ClockDivision  = 0;
+  TimHandle.Init.CounterMode    = TIM_COUNTERMODE_UP;
+
+  HAL_TIM_Base_Init(&TimHandle);
+  HAL_TIM_Base_Start(&TimHandle);
+
+
+  return true;
+}
+
+
+uint32_t micros(void)
+{
+  return TimHandle.Instance->CNT;
 }
 
 /* USER CODE BEGIN 4 */

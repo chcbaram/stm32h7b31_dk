@@ -21,7 +21,8 @@ extern "C" {
 #include "cmdif.h"
 #include "swtimer.h"
 #include "button.h"
-
+#include "sdram.h"
+#include "gpio.h"
 
 void hwInit(void);
 

@@ -26,5 +26,7 @@ void hwInit(void)
   uartOpen(_DEF_UART1, 57600);
 
   buttonInit();
+  gpioInit();
+  sdramInit();
 
 }

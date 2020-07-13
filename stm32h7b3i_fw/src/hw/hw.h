@@ -25,7 +25,7 @@ extern "C" {
 #include "gpio.h"
 #include "i2c.h"
 #include "touch.h"
-
+#include "flash.h"
 
 void hwInit(void);
 

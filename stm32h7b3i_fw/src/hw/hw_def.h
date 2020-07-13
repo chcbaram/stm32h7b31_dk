@@ -27,6 +27,7 @@
 #define _USE_HW_RTOS
 #define _USE_HW_FT5336
 #define _USE_HW_TOUCH
+#define _USE_HW_FLASH
 
 
 

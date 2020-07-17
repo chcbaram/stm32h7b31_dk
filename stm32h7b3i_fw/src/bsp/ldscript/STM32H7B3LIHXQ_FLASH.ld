@@ -44,7 +44,11 @@ MEMORY
   DTCMRAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
   RAM        (xrw)    : ORIGIN = 0x24000000,   LENGTH = 1024K
   RAM_D3     (xrw)    : ORIGIN = 0x38000000,   LENGTH = 64K 
+  
+  
+  OSPI	     (xrw)    : ORIGIN = 0x90000000,   LENGTH = 64M
 }
+
 
 /* Sections */
 SECTIONS
@@ -217,4 +221,34 @@ SECTIONS
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+  
+  
+  .ext_tag :
+  {
+    . = ALIGN(4);
+    KEEP(*(.ext_tag)) 
+    . = ALIGN(4);
+  } >OSPI
+
+  
+  FontFlashSection :
+  {
+    *(FontFlashSection FontFlashSection.*)
+    *(.gnu.linkonce.r.*)
+    . = ALIGN(0x4);
+  } >OSPI
+
+  TextFlashSection :
+  {
+    *(TextFlashSection TextFlashSection.*)
+    *(.gnu.linkonce.r.*)
+    . = ALIGN(0x4);
+  } >OSPI
+  ExtFlashSection :
+  {
+    *(ExtFlashSection ExtFlashSection.*)
+    *(.gnu.linkonce.r.*)
+    . = ALIGN(0x4);
+  } >OSPI  
+  
 }

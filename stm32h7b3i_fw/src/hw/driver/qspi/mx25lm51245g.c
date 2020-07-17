@@ -33,7 +33,13 @@
 #define OPI_CMD_WREN          0x06F9
 #define OPI_CMD_WRDI          0x04FB
 #define OPI_CMD_RDID          0x9F60
-#define OPI_CMD_8DTRD         0xEE11U
+#define OPI_CMD_8DTRD         0xEE11
+#define OPI_CMD_8READ         0xEC13
+#define OPI_CMD_PP            0x12ED
+#define OPI_CMD_SE            0x21DE
+#define OPI_CMD_BE            0xDC23
+#define OPI_CMD_CE            0x609F
+#define OPI_CMD_RDSR          0x05FA
 
 
 #define DUMMY_CYCLES_READ            8U
@@ -65,12 +71,14 @@ static bool eraseSector(uint32_t sector_addr);
 static bool eraseChip(void);
 static bool getStatus(void);
 static bool enableMemoryMappedMode(void);
+static bool disableMemoryMappedMode(void);
 
 static uint32_t getFlashSize(void);
 static uint32_t getSectorSize(void);
 static uint32_t getBlockSize(void);
 static uint32_t getPageSize(void);
 
+static bool writeEnable(void);
 
 static OSPI_HandleTypeDef hospi1;
 
@@ -89,6 +97,7 @@ bool mx25lm51245gInitDriver(qspi_driver_t *p_driver)
   p_driver->eraseChip = eraseChip;
   p_driver->getStatus = getStatus;
   p_driver->enableMemoryMappedMode = enableMemoryMappedMode;
+  p_driver->disableMemoryMappedMode = disableMemoryMappedMode;
   p_driver->getFlashSize = getFlashSize;
   p_driver->getBlockSize = getBlockSize;
   p_driver->getSectorSize = getSectorSize;
@@ -153,7 +162,7 @@ bool getID(qspi_info_t *p_info)
     return false;
   }
 
-  if (p_info->device_id[1] != 0xC2 || p_info->device_id[3] != 0x85 || p_info->device_id[5] != 0x3A )
+  if (p_info->device_id[0] != 0xC2 || p_info->device_id[1] != 0x85 || p_info->device_id[2] != 0x3A )
   {
     ret = false;
   }
@@ -179,19 +188,18 @@ bool getInfo(qspi_info_t *p_info)
   s_command.OperationType      = HAL_OSPI_OPTYPE_COMMON_CFG;
   s_command.FlashId            = HAL_OSPI_FLASH_ID_1;
   s_command.InstructionMode    = HAL_OSPI_INSTRUCTION_8_LINES;
-  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_ENABLE;
+  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_DISABLE;
   s_command.InstructionSize    = HAL_OSPI_INSTRUCTION_16_BITS;
   s_command.Instruction        = OPI_CMD_RDID;
   s_command.AddressMode        = HAL_OSPI_ADDRESS_8_LINES;
-  s_command.AddressDtrMode     = HAL_OSPI_ADDRESS_DTR_ENABLE;
+  s_command.AddressDtrMode     = HAL_OSPI_ADDRESS_DTR_DISABLE;
   s_command.AddressSize        = HAL_OSPI_ADDRESS_32_BITS;
   s_command.Address            = 0U;
   s_command.AlternateBytesMode = HAL_OSPI_ALTERNATE_BYTES_NONE;
   s_command.DataMode           = HAL_OSPI_DATA_8_LINES;
-  s_command.DataDtrMode        = HAL_OSPI_DATA_DTR_ENABLE;
-  s_command.DummyCycles        = 5;
-  s_command.NbData             = 6U;
-  //s_command.DQSMode            = HAL_OSPI_DQS_ENABLE;
+  s_command.DataDtrMode        = HAL_OSPI_DATA_DTR_DISABLE;
+  s_command.DummyCycles        = 4;
+  s_command.NbData             = 3U;
   s_command.DQSMode            = HAL_OSPI_DQS_DISABLE;
   s_command.SIOOMode           = HAL_OSPI_SIOO_INST_EVERY_CMD;
 
@@ -365,7 +373,8 @@ bool reset(void)
   s_command.AddressSize = HAL_OSPI_ADDRESS_32_BITS;
   s_command.DataMode    = HAL_OSPI_DATA_1_LINE;
   s_command.Address     = 0;
-  reg = 0x2; // DTR OPI Enable
+  //reg = 0x2; // DTR OPI Enable
+  reg = 0x1; // STR OPI Enable
 
   if (HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
@@ -391,19 +400,18 @@ bool read(uint8_t *p_data, uint32_t addr, uint32_t length)
   s_command.OperationType      = HAL_OSPI_OPTYPE_COMMON_CFG;
   s_command.FlashId            = HAL_OSPI_FLASH_ID_1;
   s_command.InstructionMode    = HAL_OSPI_INSTRUCTION_8_LINES;
-  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_ENABLE;
+  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_DISABLE;
   s_command.InstructionSize    = HAL_OSPI_INSTRUCTION_16_BITS;
-  s_command.Instruction        = OPI_CMD_8DTRD;
+  s_command.Instruction        = OPI_CMD_8READ;
   s_command.AddressMode        = HAL_OSPI_ADDRESS_8_LINES;
-  s_command.AddressDtrMode     = HAL_OSPI_ADDRESS_DTR_ENABLE;
+  s_command.AddressDtrMode     = HAL_OSPI_ADDRESS_DTR_DISABLE;
   s_command.AddressSize        = HAL_OSPI_ADDRESS_32_BITS;
   s_command.Address            = addr;
   s_command.AlternateBytesMode = HAL_OSPI_ALTERNATE_BYTES_NONE;
   s_command.DataMode           = HAL_OSPI_DATA_8_LINES;
-  s_command.DataDtrMode        = HAL_OSPI_DATA_DTR_ENABLE;
-  s_command.DummyCycles        = DUMMY_CYCLES_READ_OCTAL_DTR;
+  s_command.DataDtrMode        = HAL_OSPI_DATA_DTR_DISABLE;
+  s_command.DummyCycles        = DUMMY_CYCLES_READ_OCTAL;
   s_command.NbData             = length;
-  //s_command.DQSMode            = HAL_OSPI_DQS_ENABLE;
   s_command.DQSMode            = HAL_OSPI_DQS_DISABLE;
   s_command.SIOOMode           = HAL_OSPI_SIOO_INST_EVERY_CMD;
 
@@ -425,6 +433,43 @@ bool read(uint8_t *p_data, uint32_t addr, uint32_t length)
 bool writePage(uint32_t addr, uint32_t data_addr)
 {
   bool ret = true;
+  OSPI_RegularCmdTypeDef s_command = {0};
+
+  if (writeEnable() != true)
+  {
+    return false;
+  }
+
+  /* Initialize the program command */
+  s_command.OperationType      = HAL_OSPI_OPTYPE_COMMON_CFG;
+  s_command.FlashId            = HAL_OSPI_FLASH_ID_1;
+  s_command.InstructionMode    = HAL_OSPI_INSTRUCTION_8_LINES;
+  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_DISABLE;
+  s_command.InstructionSize    = HAL_OSPI_INSTRUCTION_16_BITS;
+  s_command.Instruction        = OPI_CMD_PP;
+  s_command.AddressMode        = HAL_OSPI_ADDRESS_8_LINES;
+  s_command.AddressDtrMode     = HAL_OSPI_ADDRESS_DTR_DISABLE;
+  s_command.AddressSize        = HAL_OSPI_ADDRESS_32_BITS;
+  s_command.Address            = addr;
+  s_command.AlternateBytesMode = HAL_OSPI_ALTERNATE_BYTES_NONE;
+  s_command.DataMode           = HAL_OSPI_DATA_8_LINES;
+  s_command.DataDtrMode        = HAL_OSPI_DATA_DTR_DISABLE;
+  s_command.DummyCycles        = 0U;
+  s_command.NbData             = _PAGE_SIZE;
+  s_command.DQSMode            = HAL_OSPI_DQS_DISABLE;
+  s_command.SIOOMode           = HAL_OSPI_SIOO_INST_EVERY_CMD;
+
+  /* Configure the command */
+  if (HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
+
+  /* Transmission of the data */
+  if (HAL_OSPI_Transmit(&hospi1, (uint8_t *)data_addr, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
 
   return ret;
 }
@@ -447,7 +492,8 @@ bool write(uint8_t *p_data, uint32_t addr, uint32_t length)
   if (offset != 0 || length < _PAGE_SIZE)
   {
     write_addr = addr - offset;
-    memcpy(&buf[0], (void *)write_addr, _PAGE_SIZE);
+    //memcpy(&buf[0], (void *)write_addr, _PAGE_SIZE);
+    read(&buf[0], write_addr, _PAGE_SIZE);
     memcpy(&buf[offset], &p_data[0], constrain(_PAGE_SIZE-offset, 0, length));
 
     ret = writePage(write_addr, (uint32_t)buf);
@@ -484,7 +530,8 @@ bool write(uint8_t *p_data, uint32_t addr, uint32_t length)
     {
       offset = length - index;
       write_addr = addr + index;
-      memcpy(&buf[0], (void *)write_addr, _PAGE_SIZE);
+      //memcpy(&buf[0], (void *)write_addr, _PAGE_SIZE);
+      read(&buf[0], write_addr, _PAGE_SIZE);
       memcpy(&buf[0], &p_data[index], offset);
 
       ret = writePage(write_addr, (uint32_t)buf);
@@ -502,6 +549,31 @@ bool write(uint8_t *p_data, uint32_t addr, uint32_t length)
 bool eraseBlock(uint32_t block_addr)
 {
   bool ret = true;
+  OSPI_RegularCmdTypeDef s_command = {0};
+
+  /* Initialize the erase command */
+  s_command.OperationType      = HAL_OSPI_OPTYPE_COMMON_CFG;
+  s_command.FlashId            = HAL_OSPI_FLASH_ID_1;
+  s_command.InstructionMode    = HAL_OSPI_INSTRUCTION_8_LINES;
+  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_DISABLE;
+  s_command.InstructionSize    = HAL_OSPI_INSTRUCTION_16_BITS;
+  s_command.AddressMode        = HAL_OSPI_ADDRESS_8_LINES;
+  s_command.AddressDtrMode     = HAL_OSPI_ADDRESS_DTR_DISABLE;
+  s_command.AddressSize        = HAL_OSPI_ADDRESS_32_BITS;
+  s_command.Address            = block_addr;
+  s_command.AlternateBytesMode = HAL_OSPI_ALTERNATE_BYTES_NONE;
+  s_command.DataMode           = HAL_OSPI_DATA_NONE;
+  s_command.DummyCycles        = 0U;
+  s_command.DQSMode            = HAL_OSPI_DQS_DISABLE;
+  s_command.SIOOMode           = HAL_OSPI_SIOO_INST_EVERY_CMD;
+
+  s_command.Instruction = OPI_CMD_BE;
+
+  /* Send the command */
+  if(HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
 
   return ret;
 }
@@ -509,6 +581,37 @@ bool eraseBlock(uint32_t block_addr)
 bool eraseSector(uint32_t sector_addr)
 {
   bool ret = true;
+  OSPI_RegularCmdTypeDef s_command = {0};
+
+
+  if (writeEnable() != true)
+  {
+    return false;
+  }
+
+  /* Initialize the erase command */
+  s_command.OperationType      = HAL_OSPI_OPTYPE_COMMON_CFG;
+  s_command.FlashId            = HAL_OSPI_FLASH_ID_1;
+  s_command.InstructionMode    = HAL_OSPI_INSTRUCTION_8_LINES;
+  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_DISABLE;
+  s_command.InstructionSize    = HAL_OSPI_INSTRUCTION_16_BITS;
+  s_command.AddressMode        = HAL_OSPI_ADDRESS_8_LINES;
+  s_command.AddressDtrMode     = HAL_OSPI_ADDRESS_DTR_DISABLE;
+  s_command.AddressSize        = HAL_OSPI_ADDRESS_32_BITS;
+  s_command.Address            = sector_addr;
+  s_command.AlternateBytesMode = HAL_OSPI_ALTERNATE_BYTES_NONE;
+  s_command.DataMode           = HAL_OSPI_DATA_NONE;
+  s_command.DummyCycles        = 0U;
+  s_command.DQSMode            = HAL_OSPI_DQS_DISABLE;
+  s_command.SIOOMode           = HAL_OSPI_SIOO_INST_EVERY_CMD;
+
+  s_command.Instruction = OPI_CMD_SE;
+
+  /* Send the command */
+  if(HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
 
   return ret;
 }
@@ -516,6 +619,33 @@ bool eraseSector(uint32_t sector_addr)
 bool eraseChip(void)
 {
   bool ret = true;
+  OSPI_RegularCmdTypeDef s_command = {0};
+
+  if (writeEnable() != true)
+  {
+    return false;
+  }
+
+
+  /* Initialize the erase command */
+  s_command.OperationType      = HAL_OSPI_OPTYPE_COMMON_CFG;
+  s_command.FlashId            = HAL_OSPI_FLASH_ID_1;
+  s_command.InstructionMode    = HAL_OSPI_INSTRUCTION_8_LINES;
+  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_DISABLE;
+  s_command.InstructionSize    = HAL_OSPI_INSTRUCTION_16_BITS;
+  s_command.Instruction        = OPI_CMD_CE;
+  s_command.AddressMode        = HAL_OSPI_ADDRESS_NONE;
+  s_command.AlternateBytesMode = HAL_OSPI_ALTERNATE_BYTES_NONE;
+  s_command.DataMode           = HAL_OSPI_DATA_NONE;
+  s_command.DummyCycles        = 0U;
+  s_command.DQSMode            = HAL_OSPI_DQS_DISABLE;
+  s_command.SIOOMode           = HAL_OSPI_SIOO_INST_EVERY_CMD;
+
+  /* Send the command */
+  if(HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
 
   return ret;
 }
@@ -528,6 +658,57 @@ bool getStatus(void)
 }
 
 bool enableMemoryMappedMode(void)
+{
+  bool ret = true;
+  OSPI_RegularCmdTypeDef      s_command = {0};
+  OSPI_MemoryMappedTypeDef s_mem_mapped_cfg = {0};
+
+  /* Initialize the read command */
+  s_command.OperationType      = HAL_OSPI_OPTYPE_READ_CFG;
+  s_command.FlashId            = HAL_OSPI_FLASH_ID_1;
+  s_command.InstructionMode    = HAL_OSPI_INSTRUCTION_8_LINES;
+  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_DISABLE;
+  s_command.InstructionSize    = HAL_OSPI_INSTRUCTION_16_BITS;
+  s_command.Instruction        = OPI_CMD_8READ;
+  s_command.AddressMode        = HAL_OSPI_ADDRESS_8_LINES;
+  s_command.AddressDtrMode     = HAL_OSPI_ADDRESS_DTR_DISABLE;
+  s_command.AddressSize        = HAL_OSPI_ADDRESS_32_BITS;
+  s_command.AlternateBytesMode = HAL_OSPI_ALTERNATE_BYTES_NONE;
+  s_command.DataMode           = HAL_OSPI_DATA_8_LINES;
+  s_command.DataDtrMode        = HAL_OSPI_DATA_DTR_DISABLE;
+  s_command.DummyCycles        = DUMMY_CYCLES_READ_OCTAL;
+  s_command.DQSMode            = HAL_OSPI_DQS_DISABLE;
+  s_command.SIOOMode           = HAL_OSPI_SIOO_INST_EVERY_CMD;
+
+  /* Send the read command */
+  if (HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
+
+  /* Initialize the program command */
+  s_command.OperationType      = HAL_OSPI_OPTYPE_WRITE_CFG;
+  s_command.Instruction        = OPI_CMD_PP;
+  s_command.DummyCycles        = 0U;
+
+  /* Send the write command */
+  if (HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
+
+  /* Configure the memory mapped mode */
+  s_mem_mapped_cfg.TimeOutActivation = HAL_OSPI_TIMEOUT_COUNTER_DISABLE;
+
+  if (HAL_OSPI_MemoryMapped(&hospi1, &s_mem_mapped_cfg) != HAL_OK)
+  {
+    return false;
+  }
+
+  return ret;
+}
+
+bool disableMemoryMappedMode(void)
 {
   bool ret = true;
 
@@ -554,6 +735,64 @@ uint32_t getPageSize(void)
   return _PAGE_SIZE;
 }
 
+bool writeEnable(void)
+{
+  OSPI_RegularCmdTypeDef     s_command = {0};
+  OSPI_AutoPollingTypeDef s_config = {0};
+
+
+  /* Initialize the write enable command */
+  s_command.OperationType      = HAL_OSPI_OPTYPE_COMMON_CFG;
+  s_command.FlashId            = HAL_OSPI_FLASH_ID_1;
+  s_command.InstructionMode    = HAL_OSPI_INSTRUCTION_8_LINES;
+  s_command.InstructionDtrMode = HAL_OSPI_INSTRUCTION_DTR_DISABLE;
+  s_command.InstructionSize    = HAL_OSPI_INSTRUCTION_16_BITS;
+  s_command.Instruction        = OPI_CMD_WREN;
+  s_command.AddressMode        = HAL_OSPI_ADDRESS_NONE;
+  s_command.AlternateBytesMode = HAL_OSPI_ALTERNATE_BYTES_NONE;
+  s_command.DataMode           = HAL_OSPI_DATA_NONE;
+  s_command.DummyCycles        = 0U;
+  s_command.DQSMode            = HAL_OSPI_DQS_DISABLE;
+  s_command.SIOOMode           = HAL_OSPI_SIOO_INST_EVERY_CMD;
+
+  /* Send the command */
+  if (HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
+
+  /* Configure automatic polling mode to wait for write enabling */
+  s_command.Instruction    = OPI_CMD_RDSR;
+  s_command.AddressMode    = HAL_OSPI_ADDRESS_8_LINES;
+  s_command.AddressDtrMode = HAL_OSPI_ADDRESS_DTR_DISABLE;
+  s_command.AddressSize    = HAL_OSPI_ADDRESS_32_BITS;
+  s_command.Address        = 0U;
+  s_command.DataMode       = HAL_OSPI_DATA_8_LINES;
+  s_command.DataDtrMode    = HAL_OSPI_DATA_DTR_DISABLE;
+  s_command.DummyCycles    = DUMMY_CYCLES_REG_OCTAL;
+  s_command.NbData         = 1U;
+  s_command.DQSMode        = HAL_OSPI_DQS_DISABLE;
+
+  /* Send the command */
+  if (HAL_OSPI_Command(&hospi1, &s_command, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
+
+  s_config.Match           = 2U;
+  s_config.Mask            = 2U;
+  s_config.MatchMode       = HAL_OSPI_MATCH_MODE_AND;
+  s_config.Interval        = 0x10;
+  s_config.AutomaticStop   = HAL_OSPI_AUTOMATIC_STOP_ENABLE;
+
+  if (HAL_OSPI_AutoPolling(&hospi1, &s_config, HAL_OSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return false;
+  }
+
+
+  return true;
+}
 
 
 

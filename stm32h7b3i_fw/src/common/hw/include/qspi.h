@@ -57,6 +57,7 @@ typedef struct qspi_driver_t_
   bool     (*eraseChip)(void);
   bool     (*getStatus)(void);
   bool     (*enableMemoryMappedMode)(void);
+  bool     (*disableMemoryMappedMode)(void);
 
   uint32_t (*getFlashSize)(void);
   uint32_t (*getSectorSize)(void);
@@ -81,6 +82,7 @@ bool qspiEraseChip(void);
 bool qspiGetStatus(void);
 bool qspiGetInfo(qspi_info_t* p_info);
 bool qspiEnableMemoryMappedMode(void);
+bool qspiDisableMemoryMappedMode(void);
 
 uint32_t qspiGetAddr(void);
 uint32_t qspiGetLength(void);

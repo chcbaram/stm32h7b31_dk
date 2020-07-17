@@ -9,7 +9,7 @@
 
 
 #include "flash.h"
-//#include "qspi.h"
+#include "qspi.h"
 #include "cmdif.h"
 
 
@@ -284,7 +284,7 @@ void flashCmdif(void)
     {
       cmdifPrintf("flash bank1 : 0x%X\n", FLASH_BANK1_BASE);
       cmdifPrintf("flash bank2 : 0x%X\n", FLASH_BANK2_BASE);
-      cmdifPrintf("qspi  addr  : 0x%X\n", 0x90000000);
+      cmdifPrintf("qspi  addr  : 0x%X\n", qspiGetAddr());
     }
     else
     {

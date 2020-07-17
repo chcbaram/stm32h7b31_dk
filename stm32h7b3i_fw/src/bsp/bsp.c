@@ -10,6 +10,7 @@
 
 #include "bsp.h"
 #include "rtos.h"
+#include "uart.h"
 
 
 void MPU_Config(void);
@@ -52,6 +53,12 @@ bool bspDeInit(void)
 {
 
   return true;
+}
+
+int __io_putchar(int ch)
+{
+  uartWrite(_DEF_UART1, (uint8_t *)&ch, 1);
+  return 1;
 }
 
 void delay(uint32_t ms)
@@ -139,8 +146,9 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART16|RCC_PERIPHCLK_I2C4
-                              |RCC_PERIPHCLK_FMC;
+                              |RCC_PERIPHCLK_OSPI|RCC_PERIPHCLK_FMC;
   PeriphClkInitStruct.FmcClockSelection = RCC_FMCCLKSOURCE_D1HCLK;
+  PeriphClkInitStruct.OspiClockSelection = RCC_OSPICLKSOURCE_D1HCLK;
   PeriphClkInitStruct.Usart16ClockSelection = RCC_USART16910CLKSOURCE_D2PCLK2;
   PeriphClkInitStruct.I2c4ClockSelection = RCC_I2C4CLKSOURCE_D3PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)

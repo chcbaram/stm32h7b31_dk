@@ -26,6 +26,8 @@ extern "C" {
 #include "i2c.h"
 #include "touch.h"
 #include "flash.h"
+#include "qspi.h"
+
 
 void hwInit(void);
 

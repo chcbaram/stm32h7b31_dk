@@ -30,7 +30,6 @@
 #define _USE_HW_FLASH
 
 
-
 #define _USE_HW_LED
 #define      HW_LED_MAX_CH          2
 
@@ -58,6 +57,10 @@
 #define _USE_HW_I2C
 #define      HW_I2C_MAX_CH          1
 
+
+#define _USE_HW_QSPI
+#define      HW_QSPI_DRIVER         MX25LM51245G
+#define      HW_QSPI_BASE_ADDR      OCTOSPI1_BASE
 
 
 #define _USE_TIMER_MICROS           TIM2

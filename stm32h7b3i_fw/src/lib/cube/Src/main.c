@@ -22,6 +22,7 @@
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
+#include "octospi.h"
 #include "usart.h"
 #include "gpio.h"
 #include "fmc.h"
@@ -104,6 +105,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_FMC_Init();
   MX_I2C4_Init();
+  MX_OCTOSPI1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -173,8 +175,9 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART16|RCC_PERIPHCLK_I2C4
-                              |RCC_PERIPHCLK_FMC;
+                              |RCC_PERIPHCLK_OSPI|RCC_PERIPHCLK_FMC;
   PeriphClkInitStruct.FmcClockSelection = RCC_FMCCLKSOURCE_D1HCLK;
+  PeriphClkInitStruct.OspiClockSelection = RCC_OSPICLKSOURCE_D1HCLK;
   PeriphClkInitStruct.Usart16ClockSelection = RCC_USART16910CLKSOURCE_D2PCLK2;
   PeriphClkInitStruct.I2c4ClockSelection = RCC_I2C4CLKSOURCE_D3PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)

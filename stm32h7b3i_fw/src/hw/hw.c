@@ -32,4 +32,5 @@ void hwInit(void)
   flashInit();
   touchInit();
   sdramInit();
+  sdInit();
 }

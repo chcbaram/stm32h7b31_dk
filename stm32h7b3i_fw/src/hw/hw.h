@@ -27,7 +27,7 @@ extern "C" {
 #include "touch.h"
 #include "flash.h"
 #include "qspi.h"
-
+#include "sd.h"
 
 void hwInit(void);
 

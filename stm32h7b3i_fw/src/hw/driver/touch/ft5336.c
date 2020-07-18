@@ -140,7 +140,7 @@ uint8_t ft5336GetTouchedCount(void)
 
     if (ret > FT5336_MAX_TOUCHES)
     {
-      ret = 0;
+      ret = FT5336_MAX_TOUCHES;
     }
   }
 

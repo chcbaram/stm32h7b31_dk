@@ -29,6 +29,7 @@
 #define _USE_HW_TOUCH
 #define _USE_HW_FLASH
 #define _USE_HW_SD
+#define _USE_HW_LTDC
 
 
 #define _USE_HW_LED
@@ -53,24 +54,31 @@
 #define      HW_SDRAM_MEM_SIZE      (16*1024*1024)
 
 #define _USE_HW_GPIO
-#define      HW_GPIO_MAX_CH         2
+#define      HW_GPIO_MAX_CH         3
 
 #define _USE_HW_I2C
 #define      HW_I2C_MAX_CH          1
 
-
 #define _USE_HW_QSPI
 #define      HW_QSPI_DRIVER         MX25LM51245G
 #define      HW_QSPI_BASE_ADDR      OCTOSPI1_BASE
+
+#define _USE_HW_LCD
+#define      HW_LCD_WIDTH           480
+#define      HW_LCD_HEIGHT          272
+
 
 
 #define _USE_TIMER_MICROS           TIM2
 #define _USE_TIMER_SYSTICK          TIM7
 
 
+#define SDRAM_ADDR_IMAGE            0xD0000000    // 2MB
 
-#define _PIN_GPIO_LCD_BKT           0
-#define _PIN_GPIO_SDCARD_DETECT     1
+
+#define _PIN_GPIO_LCD_BK_EN         0
+#define _PIN_GPIO_LCD_EN            1
+#define _PIN_GPIO_SDCARD_DETECT     2
 
 
 #endif /* SRC_HW_HW_DEF_H_ */

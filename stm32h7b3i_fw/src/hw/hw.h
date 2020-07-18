@@ -28,6 +28,8 @@ extern "C" {
 #include "flash.h"
 #include "qspi.h"
 #include "sd.h"
+#include "ltdc.h"
+#include "lcd.h"
 
 void hwInit(void);
 

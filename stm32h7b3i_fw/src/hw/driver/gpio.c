@@ -26,7 +26,8 @@ typedef struct
 gpio_tbl_t gpio_tbl[GPIO_MAX_CH] =
 {
   {GPIOA, GPIO_PIN_1,  _DEF_OUTPUT,  _DEF_HIGH, _DEF_LOW},  // 0. LCD_BKT
-  {GPIOI, GPIO_PIN_8,  _DEF_INPUT,  _DEF_HIGH, _DEF_HIGH},  // 1. SDCARD_CD
+  {GPIOA, GPIO_PIN_2,  _DEF_OUTPUT,  _DEF_HIGH, _DEF_HIGH}, // 1. LCD_EN
+  {GPIOI, GPIO_PIN_8,  _DEF_INPUT,   _DEF_HIGH, _DEF_HIGH}, // 2. SDCARD_CD
 };
 
 

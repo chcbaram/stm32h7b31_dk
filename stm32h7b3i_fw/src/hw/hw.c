@@ -33,4 +33,6 @@ void hwInit(void)
   touchInit();
   sdramInit();
   sdInit();
+  ltdcInit();
+  lcdInit();
 }
